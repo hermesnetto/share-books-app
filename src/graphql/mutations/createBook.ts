@@ -9,11 +9,13 @@ export default gql`
     $image: String
   ) {
     createBook(
-      title: $title
-      description: $description
-      categoryId: $category
-      author: $author
-      image: $image
+      input: {
+        title: $title
+        description: $description
+        categoryId: $category
+        author: $author
+        image: $image
+      }
     ) {
       id
     }

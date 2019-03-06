@@ -10,12 +10,14 @@ export default gql`
     $image: String
   ) {
     updateBook(
-      id: $id
-      title: $title
-      description: $description
-      categoryId: $category
-      author: $author
-      image: $image
+      input: {
+        id: $id
+        title: $title
+        description: $description
+        categoryId: $category
+        author: $author
+        image: $image
+      }
     ) {
       id
     }
