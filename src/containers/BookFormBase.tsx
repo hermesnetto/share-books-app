@@ -1,12 +1,16 @@
 import * as React from 'react';
+import { Query } from 'react-apollo';
+import { GET_ALL_CATEGORIES } from '../graphql/queries';
 import BookForm from '../components/BookForm';
 import { Store } from '../Store';
-import { hideBooksForm } from '../store/actions';
-import { IBookForm } from '../types';
+import { closeModal, setCurrentBook } from '../store/actions';
+import { IBook, IBookForm } from '../types';
 
 interface Props {
   mutate: (fields: IBookForm) => Promise<void>;
-  loading: boolean;
+  savingBook?: boolean;
+  fetchingBook?: boolean;
+  currentBook?: IBook;
 }
 
 const emptyBook = {
@@ -15,14 +19,42 @@ const emptyBook = {
   author: '',
   image: '',
   publisher: '',
-  publicationDate: ''
+  publicationDate: '',
+  category: ''
 };
 
-const BookFormBase: React.SFC<Props> = ({ mutate, loading }) => {
+const BookFormBase: React.SFC<Props> = ({ mutate, savingBook, fetchingBook, currentBook }) => {
   const [fields, setFieldValue] = React.useState<IBookForm>(emptyBook);
   const { dispatch } = React.useContext(Store);
 
-  const handleClose = (): void => dispatch(hideBooksForm());
+  React.useEffect(() => {
+    if (currentBook) {
+      const {
+        title,
+        description,
+        category,
+        author,
+        image,
+        publisher,
+        publicationDate
+      } = currentBook;
+
+      setFieldValue({
+        title,
+        description,
+        category: category ? category.id : '',
+        author,
+        image,
+        publisher,
+        publicationDate
+      });
+    }
+  }, []);
+
+  const handleClose = (): void => {
+    dispatch(closeModal('book'));
+    dispatch(setCurrentBook(null));
+  };
 
   const handleChange = (e: React.SyntheticEvent<HTMLInputElement>): void => {
     const { name, value } = e.currentTarget;
@@ -35,13 +67,23 @@ const BookFormBase: React.SFC<Props> = ({ mutate, loading }) => {
   };
 
   return (
-    <BookForm
-      onSubmit={handleSubmit}
-      onChange={handleChange}
-      onClose={handleClose}
-      fields={fields}
-      loading={loading}
-    />
+    <Query query={GET_ALL_CATEGORIES}>
+      {({ data, loading: categoryLoading }) => {
+        if (categoryLoading) return null;
+
+        return (
+          <BookForm
+            onSubmit={handleSubmit}
+            onChange={handleChange}
+            onClose={handleClose}
+            fields={fields}
+            categories={data.categories}
+            savingBook={savingBook}
+            fetchingBook={fetchingBook}
+          />
+        );
+      }}
+    </Query>
   );
 };
 

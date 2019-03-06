@@ -8,7 +8,7 @@ import { getToken } from '../utils/userToken';
 
 interface Props {}
 
-const Login: React.FC<Props> = () => {
+const LoginPage: React.FC<Props> = () => {
   if (getToken()) return <Redirect to="/" />;
 
   return (
@@ -23,4 +23,4 @@ const Login: React.FC<Props> = () => {
   );
 };
 
-export default Login;
+export default LoginPage;

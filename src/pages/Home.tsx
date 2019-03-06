@@ -6,7 +6,7 @@ import { Container } from '../styled';
 
 interface Props {}
 
-const Home: React.FC<Props> = () => (
+const HomePage: React.FC<Props> = () => (
   <>
     <Helmet>
       <title>Home - Share Books</title>
@@ -17,4 +17,4 @@ const Home: React.FC<Props> = () => (
   </>
 );
 
-export default Home;
+export default HomePage;

@@ -9,6 +9,7 @@ export default gql`
       rent {
         id
         status
+        userId
       }
       user {
         id

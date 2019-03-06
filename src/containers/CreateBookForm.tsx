@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { Mutation } from 'react-apollo';
+import { toast } from 'react-toastify';
+import { Alert } from 'pipestyle';
 import BookFormBase from './BookFormBase';
 import { CREATE_BOOK } from '../graphql/mutations';
 import { GET_ALL_BOOKS } from '../graphql/queries';
 import { CreateBookData, CreateBookVariables } from '../graphql/types';
 import { IBookForm } from '../types';
-import { hideBooksForm } from '../store/actions';
+import { closeModal } from '../store/actions';
 import { Store } from '../Store';
 
 interface IParams {
@@ -22,14 +24,15 @@ interface ICloseModal {
 
 interface Props {}
 
-const handleCreateBook = (createBook: ICreateBook, closeModal: ICloseModal) => async (
+const handleCreateBook = (createBook: ICreateBook, closeBookModal: ICloseModal) => async (
   fields: IBookForm
 ) => {
   try {
     await createBook({ variables: { ...fields } });
-    closeModal();
+    closeBookModal();
+    toast(<Alert type="success" icon="check" message="Book successfully created!" />);
   } catch (e) {
-    alert('Erooooou!!');
+    toast(<Alert type="danger" icon="alert" message={e.message} />);
   }
 };
 
@@ -40,7 +43,7 @@ const refetchBooks = {
 
 const CreateBookForm: React.FC<Props> = () => {
   const { dispatch } = React.useContext(Store);
-  const closeModal = (): void => dispatch(hideBooksForm());
+  const closeBookModal = (): void => dispatch(closeModal('book'));
 
   return (
     <Mutation<CreateBookData, CreateBookVariables>
@@ -48,7 +51,7 @@ const CreateBookForm: React.FC<Props> = () => {
       refetchQueries={[refetchBooks]}
     >
       {(createBook, { loading }) => (
-        <BookFormBase mutate={handleCreateBook(createBook, closeModal)} loading={loading} />
+        <BookFormBase mutate={handleCreateBook(createBook, closeBookModal)} savingBook={loading} />
       )}
     </Mutation>
   );

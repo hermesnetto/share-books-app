@@ -3,7 +3,7 @@ import { NavLink as Link } from 'react-router-dom';
 import { Icon } from 'pipestyle';
 import { Header, Container, Logo, Menu } from '../styled';
 import { Store } from '../Store';
-import { showBooksForm } from '../store/actions';
+import { openModal } from '../store/actions';
 import { getToken } from '../utils/userToken';
 
 interface Props {}
@@ -14,13 +14,20 @@ const PageHeader: React.FC<Props> = () => {
 
   const handleClickNewBook = (e: React.SyntheticEvent<HTMLAnchorElement>): void => {
     e.preventDefault();
-    dispatch(showBooksForm());
+    dispatch(openModal('book'));
+  };
+
+  const handleClickNewCategory = (e: React.SyntheticEvent<HTMLAnchorElement>): void => {
+    e.preventDefault();
+    dispatch(openModal('category'));
   };
 
   return (
     <Header>
       <Container>
-        <Logo>Books</Logo>
+        <Logo>
+          <Link to="/">Books</Link>
+        </Logo>
         <Menu>
           {userToken && (
             <li>
@@ -29,13 +36,18 @@ const PageHeader: React.FC<Props> = () => {
               </a>
             </li>
           )}
+          {userToken && (
+            <li>
+              <a href="#" onClick={handleClickNewCategory}>
+                New Category
+              </a>
+            </li>
+          )}
           <li>
-            <Link to="/" activeStyle={{ color: '#FFA61E' }}>
-              Books
-            </Link>
+            <Link to="/">Books</Link>
           </li>
           <li>
-            <Link to={userToken ? '/logout' : '/login'} activeStyle={{ color: '#FFA61E' }}>
+            <Link to={userToken ? '/logout' : '/login'}>
               {userToken ? (
                 <>
                   <Icon className="pp-ico-leave" /> Logout

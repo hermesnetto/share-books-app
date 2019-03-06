@@ -10,6 +10,14 @@ const Menu = styled.ul`
   li + li {
     margin-left: 30px;
   }
+
+  a {
+    color: #fff;
+
+    &:hover {
+      color: #ffa61e;
+    }
+  }
 `;
 
 export default Menu;
